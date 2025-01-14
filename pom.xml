@@ -49,7 +49,7 @@
 					<outputDirectory>.</outputDirectory>
 					<archive>
 						<manifest>
-							<mainClass>controller.Main</mainClass>
+							<mainClass>Main</mainClass>
 						</manifest>
                 	</archive>
 				</configuration>
