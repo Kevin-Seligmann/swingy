@@ -29,6 +29,11 @@
 		<artifactId>hibernate-validator</artifactId>
 		<version>8.0.1.Final</version>
 		</dependency>
+		<dependency>
+		<groupId>org.hibernate.orm</groupId>
+		<artifactId>hibernate-community-dialects</artifactId>
+		<version>6.2.7.Final</version>
+		</dependency>
 
 		<!-- SQLIte -->
 		<dependency>
@@ -53,6 +58,19 @@
 						</manifest>
                 	</archive>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.4.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

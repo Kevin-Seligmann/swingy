@@ -1,3 +1,6 @@
 *.class
 target
 swingy.jar
+hibernate.cfg.xml
+swingy.db
+dependency-reduced-pom.xml
