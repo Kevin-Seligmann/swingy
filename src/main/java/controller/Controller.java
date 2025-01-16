@@ -20,7 +20,7 @@ public class Controller {
 	}
 
 	public void addHero(){
-		System.out.println("Create hero");
+		currentView.addHeroMenu();
 	}
 
 	public void selectHero(){
@@ -28,10 +28,12 @@ public class Controller {
 	}
 
 	public void switchView(){
+		currentView.closeView();
 		if (currentView == cliView)
 			setGuiView();
 		else
 			setCliView();
+		currentView.loadView();
 	}
 
 	private void setGuiView(){

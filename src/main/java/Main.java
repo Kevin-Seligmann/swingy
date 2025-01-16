@@ -1,15 +1,8 @@
 // TODO: Main package
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.logging.Level;
-
-import org.hibernate.SessionFactory;
-
 import controller.Controller;
-import jakarta.validation.Validator;
-import util.HibernateUtils;
-import util.SQLiteConnectionFactory;
+
 
 public class Main {
 	public static void main(String[] args){

@@ -10,6 +10,14 @@ public class CLIView extends View {
 
 	public CLIView(Controller controller){
 		this.controller = controller;
+		loadView();
+	}
+
+	public void closeView() {
+		sc.close();
+	}
+
+	public void loadView() {
 		sc = new Scanner(System.in);
 	}
 
@@ -24,6 +32,9 @@ public class CLIView extends View {
 			case 1: controller.addHero(); break;
 			case 2: controller.selectHero(); break;	
 		}
+	}
+
+	public void addHeroMenu() {
 	}
 
 	private int getNumber(int min, int max){
@@ -41,4 +52,5 @@ public class CLIView extends View {
 			System.out.println("Choose a valid number.");
 		}
 	}
+
 }

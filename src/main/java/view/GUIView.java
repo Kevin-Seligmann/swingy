@@ -26,6 +26,13 @@ public class GUIView extends View {
 
 	public GUIView(Controller controller){
 		this.controller = controller;
+	}
+	
+	public void closeView() {
+		frame.dispose();
+	}
+
+	public void loadView() {
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle(TITLE);
@@ -33,7 +40,7 @@ public class GUIView extends View {
 		frame.getContentPane().setBackground(Color.GRAY);
 		frame.setVisible(true);
 	}
-	
+
 	public void welcomeMenu(){
 		if (welcomePanel == null)
 			createWelcomePanel();
@@ -70,5 +77,8 @@ public class GUIView extends View {
 		welcomePanel.add(addHeroButton);
 		welcomePanel.add(selectHeroButton);
 		this.welcomePanel = welcomePanel;
+	}
+
+	public void addHeroMenu() {
 	}
 }
