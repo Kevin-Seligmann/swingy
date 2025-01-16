@@ -5,47 +5,53 @@ import view.View;
 import view.CLIView;
 
 public class Controller {
-	private GUIView guiView;
-	private CLIView cliView;
+	private GameState gameState;
 	private View currentView;
 
 	public Controller(){}
 
 	public void run(String viewType){
 		if (viewType.equalsIgnoreCase("console"))
-			setCliView();
+			currentView = new CLIView(this);
 		else if (viewType.equalsIgnoreCase("gui"))
-			setGuiView();
+			currentView = new GUIView(this);
+		welcomeMenu();
+	}
+
+	public void welcomeMenu(){
+		gameState = GameState.WELCOME_SCREEN;
 		currentView.welcomeMenu();
 	}
 
 	public void addHero(){
-		currentView.addHeroMenu();
+		gameState = GameState.WELCOME_SCREEN; // Until hero creation is implemented.
+		System.out.println("Creating hero");
+		currentView.welcomeMenu();  // Until hero creation is implemented.
+		// currentView.addHeroMenu();
 	}
 
 	public void selectHero(){
-		System.out.println("Select hero");
+		gameState = GameState.WELCOME_SCREEN; // Until hero selection is implemented.
+		System.out.println("Hero selected");
+		currentView.welcomeMenu();  // Until hero selection is implemented.
+		// currentView.selectHero();
 	}
 
 	public void switchView(){
 		currentView.closeView();
-		if (currentView == cliView)
-			setGuiView();
-		else
-			setCliView();
-		currentView.loadView();
+		if (currentView instanceof CLIView)
+			currentView = new GUIView(this);
+		else if (currentView instanceof GUIView)
+			currentView = new CLIView(this);
+		switch(gameState){
+			case GameState.WELCOME_SCREEN: welcomeMenu(); break;
+			case GameState.SELECT_HERO: selectHero(); break;
+			case GameState.CREATE_HERO: addHero(); break;
+			case GameState.MAP: break;
+		}
 	}
 
-	private void setGuiView(){
-		if (guiView == null)
-			guiView = new GUIView(this);
-		currentView = guiView;
+	public void exit(){
+		currentView.closeView();
 	}
-
-	private void setCliView(){
-		if (cliView == null)
-			cliView = new CLIView(this);
-		currentView = cliView;
-	}
-
 }

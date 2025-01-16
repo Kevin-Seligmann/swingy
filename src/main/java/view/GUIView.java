@@ -26,19 +26,16 @@ public class GUIView extends View {
 
 	public GUIView(Controller controller){
 		this.controller = controller;
-	}
-	
-	public void closeView() {
-		frame.dispose();
-	}
-
-	public void loadView() {
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle(TITLE);
 		frame.setSize(X_WINDOW_SIZE, Y_WINDOW_SIZE);
 		frame.getContentPane().setBackground(Color.GRAY);
 		frame.setVisible(true);
+	}
+	
+	public void closeView() {
+		frame.dispose();
 	}
 
 	public void welcomeMenu(){
@@ -55,27 +52,41 @@ public class GUIView extends View {
 
 	private void createWelcomePanel(){
 		JPanel welcomePanel = new JPanel();
-		JButton addHeroButton = new JButton("ADD");
+		JButton addHeroButton = new JButton("ADD HERO");
 		JButton selectHeroButton = new JButton("SELECT HERO");
+		JButton changeViewButton = new JButton("CHANGE VIEW");
+		JButton exitButton = new JButton("EXIT");
 		GridLayout layout = new GridLayout(2, 1, 0, 10);
 		
 		addHeroButton.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e){
 				controller.addHero();
 			}
 		});
 
 		selectHeroButton.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e){
 				controller.selectHero();
 			}
 		});
-	
+
+		changeViewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				controller.switchView();
+			}
+		});
+
+		exitButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				controller.exit();
+			}
+		});
+
 		welcomePanel.setLayout(layout);
 		welcomePanel.add(addHeroButton);
 		welcomePanel.add(selectHeroButton);
+		welcomePanel.add(changeViewButton);
+		welcomePanel.add(exitButton);
 		this.welcomePanel = welcomePanel;
 	}
 

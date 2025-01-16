@@ -12,7 +12,7 @@ import jakarta.persistence.criteria.Root;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import util.DatabaseErrorException;
-import util.HibernateUtils;
+import util.Utils;
 import util.ModelValidationException;
 import view.View;
 
@@ -36,7 +36,7 @@ public class Model {
 		Hero hero = HeroFactory.getHero(name, type);
 		validateHero(hero);
 		try {
-			HibernateUtils.getSessionFactory().inTransaction(session -> {
+			Utils.getSessionFactory().inTransaction(session -> {
 				session.persist(hero);
 			});
 		} catch (Exception e){
@@ -47,7 +47,7 @@ public class Model {
 
 	public void removeHero(int id){
         try {
-            HibernateUtils.getSessionFactory().inTransaction(session -> {
+            Utils.getSessionFactory().inTransaction(session -> {
                 Hero hero = session.find(Hero.class, id);
                 session.remove(hero);
             });
@@ -59,7 +59,7 @@ public class Model {
 	public void updateHero(Hero hero){
         validateHero(hero);
         try {
-             HibernateUtils.getSessionFactory().inTransaction(session -> {
+             Utils.getSessionFactory().inTransaction(session -> {
              	session.merge(hero);
         });
         } catch (Exception e){
@@ -68,7 +68,7 @@ public class Model {
 	}
 
 	public List<Hero> getHeroes(){
-		SessionFactory sessionFactory = HibernateUtils.getSessionFactory();
+		SessionFactory sessionFactory = Utils.getSessionFactory();
         try {
             return sessionFactory.fromTransaction(session -> {
                 var builder = sessionFactory.getCriteriaBuilder();
@@ -85,7 +85,7 @@ public class Model {
 	private void validateHero(Hero hero){
         StringBuilder error = new StringBuilder();
 
-        Validator validator = HibernateUtils.getValidator();
+        Validator validator = Utils.getValidator();
         Set<ConstraintViolation<Hero>> constraintViolations = validator.validate(hero);
         if (!constraintViolations.isEmpty()){
             for (ConstraintViolation<Hero> violation : constraintViolations) {

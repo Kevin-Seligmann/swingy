@@ -2,6 +2,7 @@
 
 import java.util.logging.Level;
 import controller.Controller;
+import util.Utils;
 
 
 public class Main {
@@ -31,6 +32,8 @@ public class Main {
 			e.printStackTrace();
 			System.out.println("Unknown error.");
 		}
+
+		Utils.close();
 	}
 
 	private static void usage(){

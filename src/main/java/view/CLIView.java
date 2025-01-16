@@ -3,22 +3,17 @@ package view;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import controller.Controller;
+import util.Utils;
 
 public class CLIView extends View {
-	private Scanner sc;
 	private Controller controller;
 
 	public CLIView(Controller controller){
 		this.controller = controller;
-		loadView();
 	}
 
 	public void closeView() {
-		sc.close();
-	}
-
-	public void loadView() {
-		sc = new Scanner(System.in);
+		//
 	}
 
 	public void welcomeMenu(){
@@ -26,11 +21,13 @@ public class CLIView extends View {
 		System.out.println("Choose an option.");
 		System.out.println("1. Create a hero.");
 		System.out.println("2. Select a hero.");
+		System.out.println("3. Exit.");
 		System.out.println("0. Change view.");
-		switch (getNumber(0, 2)) {
+		switch (getNumber(0, 3)) {
 			case 0: controller.switchView(); break;
 			case 1: controller.addHero(); break;
-			case 2: controller.selectHero(); break;	
+			case 2: controller.selectHero(); break;
+			case 3: controller.exit();
 		}
 	}
 
@@ -42,12 +39,12 @@ public class CLIView extends View {
 
 		while (true){
 			try {
-				rta = sc.nextInt();
-				sc.nextLine();
+				rta = Utils.getScanner().nextInt();
+				Utils.getScanner().nextLine();
 				if (rta >= min && rta <= max)
 					return rta;
 			} catch(InputMismatchException e){
-				sc.nextLine();
+				Utils.getScanner().nextLine();
 			}
 			System.out.println("Choose a valid number.");
 		}
