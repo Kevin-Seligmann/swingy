@@ -1,17 +1,18 @@
 package model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
 public class Hero  {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	@Column(unique = true)
 	private String name;
 	@Enumerated(EnumType.ORDINAL)
 	private HeroType type;
@@ -25,31 +26,23 @@ public class Hero  {
 	private int armorStat;
 
 	public Hero(String name, HeroType type, int defaultAttack, int defaultDefense, int defaultHitPoints){
-		this.name = name;
-		this.type = type;
-		this.attack = defaultAttack;
-		this.defense = defaultDefense;
-		this.hitPoints = defaultHitPoints;
-		this.level = 1;
+		setName(name);
+		setType(type);
+		setAttack(defaultAttack);
+		setDefense(defaultDefense);
+		setHitPoints(defaultHitPoints);
+		setLevel(1);
 	}
 
 	// Getters, setters, default constructor. (Hibernate needs).
 	public Hero(){}
-
-	public int getId(){
-		return id;
-	}
-
-	public void setId(int id){
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.toLowerCase();
 	}
 
 	public HeroType getType() {

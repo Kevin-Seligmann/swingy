@@ -26,8 +26,8 @@ public class Main {
 		}
 
 		try {
-			Controller controller = new Controller();
-			controller.run(args[0]);
+			Controller controller = new Controller(args[0]);
+			controller.run();
 		} catch (Exception e){
 			e.printStackTrace();
 			System.out.println("Unknown error.");

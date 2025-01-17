@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -11,6 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import controller.Controller;
+import model.Hero;
+import model.Map;
 
 public class GUIView extends View {
 	private static final String TITLE = "S.W.I.N.G.Y";
@@ -34,6 +37,8 @@ public class GUIView extends View {
 		frame.setVisible(true);
 	}
 	
+	public void selectHeroMenu(){}
+
 	public void closeView() {
 		frame.dispose();
 	}
@@ -60,25 +65,25 @@ public class GUIView extends View {
 		
 		addHeroButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				controller.addHero();
+				controller.onAddHeroSelected();
 			}
 		});
 
 		selectHeroButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				controller.selectHero();
+				controller.onSelectHeroSelected();
 			}
 		});
 
 		changeViewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				controller.switchView();
+				controller.onSwitchViewSelected();
 			}
 		});
 
 		exitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				controller.exit();
+				controller.onExitSelected();
 			}
 		});
 
@@ -92,4 +97,18 @@ public class GUIView extends View {
 
 	public void addHeroMenu() {
 	}
+
+	public void notifyUser(String string) {
+	}
+
+	public void selectHeroMenu(List<Hero> heroes) {
+	}
+
+	public void selectedHeroMenu(Hero hero) {
+	}
+
+	public  void showMap(Map map){
+		
+	}
+
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -18,7 +17,20 @@ import view.View;
 
 public class Model {
 	private List<View> views;
+	private Hero currentHero;
+	private Map currentMap;
+
+	public Map getCurrentMap(){
+		return currentMap;
+	}
+
+	public void setCurrentHero(Hero hero){
+		this.currentHero = hero;
+	}
 	
+	public Hero getCurrentHero(){
+		return currentHero;
+	}
 	public Model(){
 		views = new ArrayList<>();
 	}
@@ -45,10 +57,9 @@ public class Model {
 		}
 	}
 
-	public void removeHero(int id){
+	public void removeHero(Hero hero){
         try {
             Utils.getSessionFactory().inTransaction(session -> {
-                Hero hero = session.find(Hero.class, id);
                 session.remove(hero);
             });
         } catch (Exception e){
@@ -89,9 +100,15 @@ public class Model {
         Set<ConstraintViolation<Hero>> constraintViolations = validator.validate(hero);
         if (!constraintViolations.isEmpty()){
             for (ConstraintViolation<Hero> violation : constraintViolations) {
+				if ("name".equals(violation.getPropertyPath().toString()))
+					error.append("\n").append("This name is already in use.");
                 error.append("\n").append(violation.getMessage());
             }
             throw new ModelValidationException(error.toString());
         }
     }
+
+	public void generateMap() {
+		currentMap = new Map(currentHero.getLevel());
+	}
 }
