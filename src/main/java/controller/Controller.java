@@ -2,13 +2,18 @@ package controller;
 
 import view.GUIView;
 import view.View;
+import model.HeroType;
+import model.Model;
 import view.CLIView;
 
 public class Controller {
 	private GameState gameState;
 	private View currentView;
+	private Model model;
 
-	public Controller(){}
+	public Controller(){
+		model = new Model();
+	}
 
 	public void run(String viewType){
 		if (viewType.equalsIgnoreCase("console"))
@@ -24,10 +29,15 @@ public class Controller {
 	}
 
 	public void addHero(){
-		gameState = GameState.WELCOME_SCREEN; // Until hero creation is implemented.
-		System.out.println("Creating hero");
-		currentView.welcomeMenu();  // Until hero creation is implemented.
-		// currentView.addHeroMenu();
+		gameState = GameState.CREATE_HERO;
+		currentView.addHeroMenu();
+	}
+
+	public void addHeroInput(String name, HeroType type){
+		// currentView.notifyUser("Hero added");
+		model.addHero(name, type);
+		gameState = GameState.WELCOME_SCREEN;
+		currentView.welcomeMenu();
 	}
 
 	public void selectHero(){

@@ -1,6 +1,8 @@
 package model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,6 +13,7 @@ public class Hero  {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String name;
+	@Enumerated(EnumType.ORDINAL)
 	private HeroType type;
 	private int level;
 	private int experience;
@@ -40,7 +43,7 @@ public class Hero  {
 	public void setId(int id){
 		this.id = id;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
