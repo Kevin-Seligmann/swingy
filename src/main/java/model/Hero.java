@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity
-public class Hero  {
+public class Hero {
 	@Id
 	@Column(unique = true)
 	private String name;
