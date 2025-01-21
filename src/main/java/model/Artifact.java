@@ -16,4 +16,8 @@ public class Artifact {
 	public int getStatModifier(){
 		return this.statModifier;
 	}
+
+	public String toString(){
+		return "Artifact type: " + type.toString() + " Stat: " + statModifier;
+	}
 }

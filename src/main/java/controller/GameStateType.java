@@ -1,0 +1,5 @@
+package controller;
+
+public enum GameStateType {
+	WELCOME_SCREEN, SELECT_HERO, CREATE_HERO, MAP, SELECTED_HERO, PRE_FIGHT_MENU, ARTIFACT_MENU
+}

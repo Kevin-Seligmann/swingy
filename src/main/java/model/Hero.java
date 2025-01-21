@@ -4,10 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.UniqueConstraint;
 
 @Entity
 public class Hero {
@@ -32,6 +29,37 @@ public class Hero {
 		setDefense(defaultDefense);
 		setHitPoints(defaultHitPoints);
 		setLevel(1);
+	}
+
+	public int getNextLevelExperience(){
+		return level * 1000 + (level - 1) * (level - 1) * 450;
+	}
+
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Hero '").append(name).append("'\n").
+		append("Class: ").append(type.toString()).append("\n").
+		append("Level: ").append(level).
+		append(". XP (").append(experience).append("/").append(getNextLevelExperience()).append(")").append("\n").
+		append("Attack ").append(attack).
+		append(", HitPoints ").append(hitPoints).
+		append(", Defense ").append(defense).append("\n").
+		append("Artifacts:").
+		append(" Weapon ").append(weaponStat).
+		append(", Helm ").append(helmStat).
+		append(", Armor ").append(armorStat).append("\n");
+		if (type == HeroType.ENCHANTER){
+			sb.append("Enchanter artifact bonus: ").
+			append("Weapon ").append(weaponStat * enchanterArtifactMultiplier()).
+			append(", Helm ").append(helmStat *  enchanterArtifactMultiplier()).
+			append(", Armor ").append(armorStat * enchanterArtifactMultiplier()).append("\n");
+		}
+		return sb.toString();
+	}
+
+	public int enchanterArtifactMultiplier(){
+		return level;
 	}
 
 	// Getters, setters, default constructor. (Hibernate needs).
@@ -117,5 +145,7 @@ public class Hero {
 		this.armorStat = armorStat;
 	}
 
-	
+	public void resetStats() {
+		HeroFactory.resetStatsOnLevel(this);
+	}
 }

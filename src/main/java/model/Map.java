@@ -26,13 +26,23 @@ public class Map {
 		return size;
 	}
 
+	public MapCell getCell(int x, int y){
+		return mapGrid[x][y];
+	}
+
+	public void setHeroCell(MapCell cell){
+		heroCell.putEmpty();
+		cell.putHero();
+		heroCell = cell;
+	}
+
 	public String toString(){
 		StringBuilder stringBuilder = new StringBuilder();
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				if (mapGrid[i][j].isHero())
+		for (int j = 0; j < size; j++) {
+			for (int i = 0; i < size; i++) {
+				if (mapGrid[i][size - 1 - j].isHero())
 					stringBuilder.append("P");
-				else if (mapGrid[i][j].isExplored())
+				else if (mapGrid[i][size - 1 - j].isExplored())
 					stringBuilder.append("O");
 				else
 					stringBuilder.append("X");
@@ -101,5 +111,13 @@ public class Map {
 
 	private boolean shouldHaveArtifact(){
 		return (Math.random() < ARTIFACT_DENSITY);
+	}
+
+	public boolean isCellOnEdge(MapCell targetCell) {
+		return
+			targetCell.getX() == size - 1 || 
+			targetCell.getY() == size - 1 ||
+			targetCell.getY() == 0 ||
+			targetCell.getX() == 0;
 	}
 }

@@ -10,28 +10,19 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import util.DatabaseErrorException;
-import util.Utils;
 import util.ModelValidationException;
 import view.View;
 
 public class Model {
 	private List<View> views;
-	private Hero currentHero;
-	private Map currentMap;
+	SessionFactory sessionFactory;
+	ValidatorFactory validatorFactory;
 
-	public Map getCurrentMap(){
-		return currentMap;
-	}
-
-	public void setCurrentHero(Hero hero){
-		this.currentHero = hero;
-	}
-	
-	public Hero getCurrentHero(){
-		return currentHero;
-	}
-	public Model(){
+	public Model(SessionFactory sessionFactory, ValidatorFactory validatorFactory){
+		this.sessionFactory = sessionFactory;
+		this.validatorFactory = validatorFactory;
 		views = new ArrayList<>();
 	}
 
@@ -48,7 +39,7 @@ public class Model {
 		Hero hero = HeroFactory.getHero(name, type);
 		validateHero(hero);
 		try {
-			Utils.getSessionFactory().inTransaction(session -> {
+			sessionFactory.inTransaction(session -> {
 				session.persist(hero);
 			});
 		} catch (Exception e){
@@ -59,7 +50,7 @@ public class Model {
 
 	public void removeHero(Hero hero){
         try {
-            Utils.getSessionFactory().inTransaction(session -> {
+            sessionFactory.inTransaction(session -> {
                 session.remove(hero);
             });
         } catch (Exception e){
@@ -70,7 +61,7 @@ public class Model {
 	public void updateHero(Hero hero){
         validateHero(hero);
         try {
-             Utils.getSessionFactory().inTransaction(session -> {
+			sessionFactory.inTransaction(session -> {
              	session.merge(hero);
         });
         } catch (Exception e){
@@ -79,7 +70,6 @@ public class Model {
 	}
 
 	public List<Hero> getHeroes(){
-		SessionFactory sessionFactory = Utils.getSessionFactory();
         try {
             return sessionFactory.fromTransaction(session -> {
                 var builder = sessionFactory.getCriteriaBuilder();
@@ -96,7 +86,7 @@ public class Model {
 	private void validateHero(Hero hero){
         StringBuilder error = new StringBuilder();
 
-        Validator validator = Utils.getValidator();
+        Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<Hero>> constraintViolations = validator.validate(hero);
         if (!constraintViolations.isEmpty()){
             for (ConstraintViolation<Hero> violation : constraintViolations) {
@@ -107,8 +97,4 @@ public class Model {
             throw new ModelValidationException(error.toString());
         }
     }
-
-	public void generateMap() {
-		currentMap = new Map(currentHero.getLevel());
-	}
 }

@@ -12,8 +12,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import controller.Controller;
+import controller.UserInput;
+import model.Artifact;
+import model.Enemy;
 import model.Hero;
 import model.Map;
+import model.MapCell;
 
 public class GUIView extends View {
 	private static final String TITLE = "S.W.I.N.G.Y";
@@ -29,6 +33,18 @@ public class GUIView extends View {
 
 	public GUIView(Controller controller){
 		this.controller = controller;
+		initView();
+	}
+
+	public GUIView(){
+		initView();
+	}
+
+	public void setController(Controller controller){
+		this.controller = controller;
+	}
+	
+	private void initView(){
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle(TITLE);
@@ -36,7 +52,7 @@ public class GUIView extends View {
 		frame.getContentPane().setBackground(Color.GRAY);
 		frame.setVisible(true);
 	}
-	
+
 	public void selectHeroMenu(){}
 
 	public void closeView() {
@@ -107,8 +123,14 @@ public class GUIView extends View {
 	public void selectedHeroMenu(Hero hero) {
 	}
 
-	public  void showMap(Map map){
+	public void showMap(Map currentMap, Hero currentHero){
 		
 	}
 
+	public void preFightMenu(int enemyLevel){
+	}
+	
+	public void showArtifactMenu(Hero hero, Artifact artifact){
+
+	}
 }
