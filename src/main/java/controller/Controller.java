@@ -10,6 +10,7 @@ import model.HeroType;
 import model.Map;
 import model.MapCell;
 import model.Model;
+import util.ModelValidationException;
 import view.CLIView;
 
 public class Controller {
@@ -79,8 +80,12 @@ public class Controller {
 	}
 
 	public void onAddHero(String name, HeroType type){
-		model.addHero(name, type);
-		currentView.notifyUser("Hero added.");
+		try {
+			model.addHero(name, type);
+			currentView.notifyUser("Hero added.");	
+		} catch (ModelValidationException e){
+			currentView.notifyUser(e.getMessage());
+		}
 		gameState.setGameStateType(GameStateType.WELCOME_SCREEN);
 	}
 
@@ -209,6 +214,9 @@ public class Controller {
 		int enemyLevel = enemy.getLevel();
 		int expGained = (enemyLevel * 1000 + (enemyLevel - 1) * (enemyLevel - 1) * 450) / 5;
 		
+		if (hero.getLevel() == Hero.MAX_LEVEL){
+			return ;
+		}
 		hero.setExperience(hero.getExperience() + expGained);
 		if (hero.getExperience() >= hero.getNextLevelExperience()){
 			hero.setExperience(0);

@@ -43,8 +43,8 @@ public class Model {
 				session.persist(hero);
 			});
 		} catch (Exception e){
-			e.printStackTrace();
-			throw new DatabaseErrorException("Error interacting with the database.");
+			// e.printStackTrace();
+			throw new DatabaseErrorException("Adding Hero.");
 		}
 	}
 
@@ -54,18 +54,17 @@ public class Model {
                 session.remove(hero);
             });
         } catch (Exception e){
-            throw new DatabaseErrorException("Error interacting with the database.");
+            throw new DatabaseErrorException("Removing Hero.");
         }
 	}
 
 	public void updateHero(Hero hero){
-        validateHero(hero);
         try {
 			sessionFactory.inTransaction(session -> {
              	session.merge(hero);
         });
         } catch (Exception e){
-            throw new DatabaseErrorException("Error interacting with the database.");
+            throw new DatabaseErrorException("Updating Hero.");
         }
 	}
 
@@ -79,7 +78,7 @@ public class Model {
                 return session.createSelectionQuery(query).getResultList();
             });
         } catch (Exception e) {
-            throw new DatabaseErrorException("Error interacting with the database.");
+            throw new DatabaseErrorException("Retrieving Heroes.");
         }
 	}
 
@@ -90,8 +89,6 @@ public class Model {
         Set<ConstraintViolation<Hero>> constraintViolations = validator.validate(hero);
         if (!constraintViolations.isEmpty()){
             for (ConstraintViolation<Hero> violation : constraintViolations) {
-				if ("name".equals(violation.getPropertyPath().toString()))
-					error.append("\n").append("This name is already in use.");
                 error.append("\n").append(violation.getMessage());
             }
             throw new ModelValidationException(error.toString());

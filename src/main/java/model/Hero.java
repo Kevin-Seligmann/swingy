@@ -1,15 +1,21 @@
 package model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Hero {
+	public static final int MAX_LEVEL = 10;
+
 	@Id
-	@Column(unique = true)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	@Size(min = 2, max = 10, message = "Name must have a length between {min} and {max}")
 	private String name;
 	@Enumerated(EnumType.ORDINAL)
 	private HeroType type;
@@ -40,8 +46,10 @@ public class Hero {
 
 		sb.append("Hero '").append(name).append("'\n").
 		append("Class: ").append(type.toString()).append("\n").
-		append("Level: ").append(level).
-		append(". XP (").append(experience).append("/").append(getNextLevelExperience()).append(")").append("\n").
+		append("Level: ").append(level).append(". ");
+		if (level == MAX_LEVEL)
+			sb.append(" (MAX). ");
+		sb.append(" XP (").append(experience).append("/").append(getNextLevelExperience()).append(")\n").
 		append("Attack ").append(attack).
 		append(", HitPoints ").append(hitPoints).
 		append(", Defense ").append(defense).append("\n").

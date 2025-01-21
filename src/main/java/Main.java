@@ -11,6 +11,7 @@ import controller.Controller;
 import jakarta.validation.Validation;
 import jakarta.validation.ValidatorFactory;
 import model.Model;
+import util.DatabaseErrorException;
 import util.ScannerProvider;
 import view.CLIView;
 import view.GUIView;
@@ -60,8 +61,10 @@ public class Main {
 			sessionFactory.close();
 			validatorFactory.close();
 			ScannerProvider.close();
+		} catch  (DatabaseErrorException e){
+			System.out.println(e.getMessage());
 		} catch (Exception e){
-			e.printStackTrace();
+			// e.printStackTrace();
 			System.out.println("Unknown error.");
 		}
 
