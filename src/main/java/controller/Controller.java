@@ -10,6 +10,7 @@ import model.HeroType;
 import model.Map;
 import model.MapCell;
 import model.Model;
+import util.DatabaseErrorException;
 import util.ModelValidationException;
 import util.ScannerProvider;
 import view.CLIView;
@@ -35,6 +36,8 @@ public class Controller {
 	}
 
 	private void showView(){
+		if (currentView == null)
+			return ;
 		switch(gameState.getGameStateType()){
 			case WELCOME_SCREEN: currentView.welcomeMenu(); break;
 			case SELECT_HERO: currentView.selectHeroMenu(model.getHeroes()); break;
@@ -91,8 +94,9 @@ public class Controller {
 
 	public void onAddHero(String name, HeroType type){
 		try {
-			model.addHero(name, type);
-			currentView.notifyUser("Hero added.");	
+			safeAddHero(name, type);
+			if (currentView != null)
+				currentView.notifyUser("Hero added.");	
 		} catch (ModelValidationException e){
 			currentView.notifyUser(e.getMessage());
 		}
@@ -107,8 +111,9 @@ public class Controller {
 	}
 
 	public void onRemoveHeroSelected() {
-		model.removeHero(gameState.getCurrentHero());
-		currentView.notifyUser("Hero removed.");
+		safeRemoveHero();
+		if (currentView != null)
+			currentView.notifyUser("Hero removed.");
 		gameState.setGameStateType(GameStateType.WELCOME_SCREEN);
 		showView();
 	}
@@ -142,7 +147,7 @@ public class Controller {
 		FightResult fightResult = fight();
 		if (fightResult == FightResult.LOSE){
 			currentView.notifyUser("You died.");
-			model.removeHero(gameState.getCurrentHero());
+			safeRemoveHero();
 			gameState.setGameStateType(GameStateType.WELCOME_SCREEN);
 			showView();
 		} else {
@@ -220,7 +225,7 @@ public class Controller {
 			case ArtifactType.WEAPON: hero.setWeaponStat(artifact.getStatModifier()); break;
 			case ArtifactType.HELM: hero.setHelmStat(artifact.getStatModifier()); break;
 		}
-		model.updateHero(hero);
+		safeUpdateHero();
 		move();
 	}
 
@@ -244,7 +249,7 @@ public class Controller {
 			hero.resetStats();
 			currentView.notifyUser("You leveled up!");
 		}
-		model.updateHero(hero);
+		safeUpdateHero();
 	}
 
 	private MapCell getTargetCell(UserInput input){
@@ -258,5 +263,32 @@ public class Controller {
 			case EAST: return map.getCell(heroCell.getX() + 1, heroCell.getY());
 			default: return null;
 		}
+	}
+
+	private void safeUpdateHero(){
+		try {
+			model.updateHero(gameState.getCurrentHero());
+		} catch  (DatabaseErrorException e){
+			System.out.println(e.getMessage());
+			onExitSelected();
+		} 
+	}
+
+	private void safeAddHero(String name, HeroType type){
+		try {
+			model.addHero(name, type);
+		} catch  (DatabaseErrorException e){
+			System.out.println(e.getMessage());
+			onExitSelected();
+		} 
+	}
+
+	private void safeRemoveHero(){
+		try {
+			model.removeHero(gameState.getCurrentHero());
+		} catch  (DatabaseErrorException e){
+			System.out.println(e.getMessage());
+			onExitSelected();
+		} 
 	}
 }

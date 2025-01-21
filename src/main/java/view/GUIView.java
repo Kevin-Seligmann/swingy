@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -12,12 +14,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import controller.Controller;
-import controller.UserInput;
 import model.Artifact;
-import model.Enemy;
 import model.Hero;
 import model.Map;
-import model.MapCell;
 
 public class GUIView extends View {
 	private static final String TITLE = "S.W.I.N.G.Y";
@@ -39,11 +38,11 @@ public class GUIView extends View {
 	}
 
 	public GUIView(){
-		initView();
 	}
 
 	public void setController(Controller controller){
 		this.controller = controller;
+		initView();
 	}
 
 	public void closeView() {
@@ -84,6 +83,7 @@ public class GUIView extends View {
 		createFrame();
 		createComponents();
 		createWelcomePanel();
+		frame.setVisible(true);
 	}
 
 	private void setPanel(JPanel panel){
@@ -98,7 +98,13 @@ public class GUIView extends View {
 		frame.setTitle(TITLE);
 		frame.setSize(X_WINDOW_SIZE, Y_WINDOW_SIZE);
 		frame.getContentPane().setBackground(Color.GRAY);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				controller.onExitSelected();
+			}
+		});
 	}
 
 	private void createComponents(){
