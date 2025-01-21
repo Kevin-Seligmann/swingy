@@ -26,12 +26,9 @@ public class Model {
 		views = new ArrayList<>();
 	}
 
-	public void registerView(View view){
-		views.add(view);
-	}
-
-	public void unregisterView(View view){
-		views.remove(view);
+	public void freeResources(){
+		sessionFactory.close();
+		validatorFactory.close();
 	}
 
 	// CRUD 

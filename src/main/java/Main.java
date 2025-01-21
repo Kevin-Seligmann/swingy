@@ -32,6 +32,9 @@ public class Main {
 			return ;
 		}
 
+		SessionFactory sessionFactory = null;
+		ValidatorFactory validatorFactory = null;
+		Controller controller = null;
 		try {
 			View view;
 		
@@ -47,20 +50,16 @@ public class Main {
 				return ;
 			}
 
-			ValidatorFactory validatorFactory = Validation.byProvider(org.hibernate.validator.HibernateValidator.class)
+			validatorFactory = Validation.byProvider(org.hibernate.validator.HibernateValidator.class)
                 .configure()
                 .messageInterpolator(new ParameterMessageInterpolator())
                 .buildValidatorFactory();
-			SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+			sessionFactory = new Configuration().configure().buildSessionFactory();
 			Model model = new Model(sessionFactory, validatorFactory);
-			Controller controller = new Controller(view, model);
+			controller = new Controller(view, model);
 			view.setController(controller);
 			
 			controller.run();
-
-			sessionFactory.close();
-			validatorFactory.close();
-			ScannerProvider.close();
 		} catch  (DatabaseErrorException e){
 			System.out.println(e.getMessage());
 		} catch (Exception e){

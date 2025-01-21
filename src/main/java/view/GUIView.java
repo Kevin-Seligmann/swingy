@@ -25,6 +25,8 @@ public class GUIView extends View {
 	private static final int Y_WINDOW_SIZE = 800;
 	private Controller controller;
 	private JFrame frame;
+	private JButton exitButton;
+	private JButton switchViewButton;
 	private JPanel welcomePanel;
 	private JPanel mapPanel;
 	private JPanel fightPanel;
@@ -43,73 +45,17 @@ public class GUIView extends View {
 	public void setController(Controller controller){
 		this.controller = controller;
 	}
-	
-	private void initView(){
-		frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setTitle(TITLE);
-		frame.setSize(X_WINDOW_SIZE, Y_WINDOW_SIZE);
-		frame.getContentPane().setBackground(Color.GRAY);
-		frame.setVisible(true);
-	}
-
-	public void selectHeroMenu(){}
 
 	public void closeView() {
 		frame.dispose();
 	}
 
 	public void welcomeMenu(){
-		if (welcomePanel == null)
-			createWelcomePanel();
 		setPanel(welcomePanel);
 	}
+	
+	public void selectHeroMenu(){}
 
-	private void setPanel(JPanel panel){
-		frame.setContentPane(panel);
-		frame.revalidate();
-		frame.repaint();
-	}
-
-	private void createWelcomePanel(){
-		JPanel welcomePanel = new JPanel();
-		JButton addHeroButton = new JButton("ADD HERO");
-		JButton selectHeroButton = new JButton("SELECT HERO");
-		JButton changeViewButton = new JButton("CHANGE VIEW");
-		JButton exitButton = new JButton("EXIT");
-		GridLayout layout = new GridLayout(2, 1, 0, 10);
-		
-		addHeroButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-				controller.onAddHeroSelected();
-			}
-		});
-
-		selectHeroButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-				controller.onSelectHeroSelected();
-			}
-		});
-
-		changeViewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-				controller.onSwitchViewSelected();
-			}
-		});
-
-		exitButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-				controller.onExitSelected();
-			}
-		});
-
-		welcomePanel.setLayout(layout);
-		welcomePanel.add(addHeroButton);
-		welcomePanel.add(selectHeroButton);
-		welcomePanel.add(changeViewButton);
-		welcomePanel.add(exitButton);
-		this.welcomePanel = welcomePanel;
-	}
 
 	public void addHeroMenu() {
 	}
@@ -132,5 +78,67 @@ public class GUIView extends View {
 	
 	public void showArtifactMenu(Hero hero, Artifact artifact){
 
+	}
+
+	private void initView(){
+		createFrame();
+		createComponents();
+		createWelcomePanel();
+	}
+
+	private void setPanel(JPanel panel){
+		frame.setContentPane(panel);
+		frame.revalidate();
+		frame.repaint();
+	}
+
+	private void createFrame(){
+		frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setTitle(TITLE);
+		frame.setSize(X_WINDOW_SIZE, Y_WINDOW_SIZE);
+		frame.getContentPane().setBackground(Color.GRAY);
+		frame.setVisible(true);
+	}
+
+	private void createComponents(){
+		switchViewButton = new JButton("SWITCH VIEW");
+		switchViewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				controller.onSwitchViewSelected();
+			}
+		});
+
+		exitButton = new JButton("EXIT");
+		exitButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				controller.onExitSelected();
+			}
+		});
+	}
+
+	private void createWelcomePanel(){
+		welcomePanel = new JPanel();
+		JButton addHeroButton = new JButton("ADD HERO");
+		JButton selectHeroButton = new JButton("SELECT HERO");
+		GridLayout layout = new GridLayout(5, 1, 0, 10);
+		
+		addHeroButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				controller.onAddHeroSelected();
+			}
+		});
+
+		selectHeroButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				controller.onSelectHeroSelected();
+			}
+		});
+
+		welcomePanel.setLayout(layout);
+		welcomePanel.add(addHeroButton);
+		welcomePanel.add(selectHeroButton);
+		welcomePanel.add(switchViewButton);
+		welcomePanel.add(exitButton);
 	}
 }
