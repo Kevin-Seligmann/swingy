@@ -4,24 +4,23 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-
-import org.hibernate.sql.ast.tree.predicate.Junction;
 
 import controller.Controller;
 import model.Artifact;
 import model.Hero;
+import model.HeroType;
 import model.Map;
 
 public class GUIView extends View {
@@ -42,9 +41,11 @@ public class GUIView extends View {
 
 	// Welcome view
 	private JPanel welcomeViewPanel;
-	private BoxLayout welcomeViewLayout;
-	private JButton selectHeroButton;
-	private JButton createHeroButton;
+
+	// Create hero view
+	private JPanel createHeroViewPanel;
+	private JTextField heroNameField;
+	private ButtonGroup heroClassGroup;
 
 	public GUIView(Controller controller){
 		this.controller = controller;
@@ -68,6 +69,9 @@ public class GUIView extends View {
 	}
 	
 	public void addHeroMenu() {
+		heroNameField.setText("");
+		heroClassGroup.clearSelection();	
+		setCentralPanel(createHeroViewPanel);
 		// Add hero panel with form, and go back
 	}
 
@@ -96,10 +100,9 @@ public class GUIView extends View {
 	}
 
 	private void setCentralPanel(JPanel panel){
-		// if (mainFrame.getContentPane().getComponentCount() > 0) {
-		// 	mainFrame.getContentPane().remove(mainLayout.getLayoutComponent(BorderLayout.CENTER));
-		// }
+		mainFrame.getContentPane().removeAll();
 		mainFrame.add(panel, BorderLayout.CENTER);
+		mainFrame.add(southButtonsPanel, BorderLayout.SOUTH);
 		mainFrame.revalidate();
 		mainFrame.repaint();
 	}
@@ -108,6 +111,7 @@ public class GUIView extends View {
 		configureMainFrame();
 		configureSouthPanel();
 		configureWelcomeView();
+		configureCreateHeroView();
 		mainFrame.setVisible(true);
 	}
 
@@ -148,22 +152,72 @@ public class GUIView extends View {
 	}
 
 	private void configureWelcomeView(){
+		GridLayout welcomeViewLayout = new GridLayout(2, 1);
 		welcomeViewPanel = new JPanel();
-		welcomeViewLayout = new BoxLayout(welcomeViewPanel, BoxLayout.Y_AXIS);
-		welcomeViewPanel.setAlignmentY(JPanel.CENTER_ALIGNMENT);
+		welcomeViewPanel.setLayout(welcomeViewLayout);
 
-		selectHeroButton = new JButton("SELECT HERO");
+		JButton selectHeroButton = new JButton("SELECT HERO");
 		selectHeroButton.addActionListener(e->controller.onSelectHeroSelected());
 		welcomeViewPanel.add(selectHeroButton);
-		selectHeroButton.setAlignmentY(JButton.CENTER_ALIGNMENT);
-		selectHeroButton.setAlignmentX(JButton.CENTER_ALIGNMENT);
 
-		createHeroButton = new JButton("CREATE HERO");
+		JButton createHeroButton = new JButton("CREATE HERO");
 		createHeroButton.addActionListener(e->controller.onAddHeroSelected());
 		welcomeViewPanel.add(createHeroButton);
-		createHeroButton.setAlignmentY(JButton.CENTER_ALIGNMENT);
-		createHeroButton.setAlignmentX(JButton.CENTER_ALIGNMENT);
 
-		welcomeViewPanel.setLayout(welcomeViewLayout);
+	}
+
+	private void configureCreateHeroView(){
+		GridLayout createHeroViewLayout = new GridLayout(8, 1);
+		heroClassGroup = new ButtonGroup();
+		createHeroViewPanel = new JPanel();
+		createHeroViewPanel.setLayout(createHeroViewLayout);
+
+		JLabel heroNameLabel = new JLabel("Hero Name");
+		createHeroViewPanel.add(heroNameLabel);
+
+		heroNameField = new JTextField();
+		createHeroViewPanel.add(heroNameField);
+
+		JLabel heroClassLabel = new JLabel("Hero Class");
+		createHeroViewPanel.add(heroClassLabel);
+
+		JRadioButton heroWarriorRadioButton = new JRadioButton("WARRIOR");
+		createHeroViewPanel.add(heroWarriorRadioButton);
+		heroClassGroup.add(heroWarriorRadioButton);
+
+		JRadioButton heroEnchanterRadioButton = new JRadioButton("ENCHANTER");
+		createHeroViewPanel.add(heroEnchanterRadioButton);
+		heroClassGroup.add(heroEnchanterRadioButton);
+
+		JRadioButton heroPeasantRadioButton = new JRadioButton("PEASANT");
+		createHeroViewPanel.add(heroPeasantRadioButton);
+		heroClassGroup.add(heroPeasantRadioButton);
+
+		JButton createHeroButton = new JButton("CREATE HERO");
+			createHeroButton.addActionListener(e->{
+				String heroName = heroNameField.getText().trim().toLowerCase();
+				HeroType heroClass = null;
+
+				if (heroWarriorRadioButton.isSelected()) {
+					heroClass = HeroType.WARRIOR;
+				} else if (heroEnchanterRadioButton.isSelected()) {
+					heroClass = HeroType.ENCHANTER;
+				} else if (heroPeasantRadioButton.isSelected()) {
+					heroClass = HeroType.PEASANT;
+				}
+
+				if (heroName.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Please enter a hero name!", "Error", JOptionPane.ERROR_MESSAGE);
+				} else if (heroClass == null) {
+					JOptionPane.showMessageDialog(null, "Please select a hero class!", "Error", JOptionPane.ERROR_MESSAGE);
+				} else {
+					controller.onAddHero(heroName, heroClass);
+				}
+		});
+		createHeroViewPanel.add(createHeroButton);
+
+		JButton goBackButton = new JButton("GO BACK");
+		goBackButton.addActionListener(e->{controller.welcomeMenu();});
+		createHeroViewPanel.add(goBackButton);
 	}
 }
