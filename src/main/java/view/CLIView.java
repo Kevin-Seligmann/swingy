@@ -200,6 +200,7 @@ public class CLIView extends View {
 			"d", "east",
 			"w", "north",
 			"s", "south",
+			"q", "quit",
 			"e", "exit",
 			"v", "view"
 		);

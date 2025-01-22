@@ -63,11 +63,9 @@ public class Main {
 		} catch  (DatabaseErrorException e){
 			System.out.println(e.getMessage());
 		} catch (Exception e){
-			// e.printStackTrace();
+			e.printStackTrace();
 			System.out.println("Unknown error.");
 		}
-
-		ScannerProvider.close();
 	}
 
 	private static void usage(){
