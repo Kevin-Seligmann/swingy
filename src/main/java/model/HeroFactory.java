@@ -14,11 +14,14 @@ public class HeroFactory {
 	private static int PEASANT_DEFAULT_DEF = 1;
 
 	public static Hero getHero(String name, HeroType type){
+		if (type == null) {
+			return new Hero(name, type, 0, 0, 0); // To validate with anotations
+		}
 		switch (type) {
 			case HeroType.ENCHANTER: return new Hero(name, type, ENCHANTER_DEFAULT_ATK, ENCHANTER_DEFAULT_DEF, ENCHANTER_DEFAULT_HP);
 			case HeroType.PEASANT: return new Hero(name, type, PEASANT_DEFAULT_ATK, PEASANT_DEFAULT_DEF, PEASANT_DEFAULT_HP);
 			case HeroType.WARRIOR: return new Hero(name, type, WARRIOR_DEFAULT_ATK, WARRIOR_DEFAULT_DEF, WARRIOR_DEFAULT_HP);
-			default: return null;
+			default: return new Hero(name, type, 0, 0, 0);
 		}
 	}
 

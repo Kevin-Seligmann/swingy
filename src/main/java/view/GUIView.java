@@ -295,9 +295,8 @@ public class GUIView extends View {
 					heroClass = HeroType.ENCHANTER;
 				} else if (heroPeasantRadioButton.isSelected()) {
 					heroClass = HeroType.PEASANT;
-				}
+				} 
 
-				// TODO: Notation based handling of empty name and empty class.
 				controller.onAddHero(heroName, heroClass);
 		});
 		createHeroViewPanel.add(createHeroButton);

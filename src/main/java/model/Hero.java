@@ -6,6 +6,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -15,8 +16,10 @@ public class Hero {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	@NotNull(message = "Hero name cant be null")
 	@Size(min = 2, max = 10, message = "Name must have a length between {min} and {max}")
 	private String name;
+	@NotNull(message = "Hero class cant be null")
 	@Enumerated(EnumType.ORDINAL)
 	private HeroType type;
 	private int level;

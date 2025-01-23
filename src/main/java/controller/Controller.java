@@ -96,11 +96,11 @@ public class Controller {
 		try {
 			safeAddHero(name, type);
 			if (currentView != null)
-				currentView.notifyUser("Hero added.");	
+				currentView.notifyUser("Hero added.");
+			gameState.setGameStateType(GameStateType.WELCOME_SCREEN);
 		} catch (ModelValidationException e){
 			currentView.notifyUser(e.getMessage());
 		}
-		gameState.setGameStateType(GameStateType.WELCOME_SCREEN);
 		showView();
 	}
 
