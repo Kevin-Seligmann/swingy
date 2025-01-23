@@ -15,9 +15,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
 
 import controller.Controller;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import model.Artifact;
 import model.Hero;
 import model.HeroType;
@@ -33,11 +39,12 @@ public class GUIView extends View {
 	private JFrame mainFrame;
 	private BorderLayout mainLayout;
 
-	// South panel
+	// South panel and components for multples vieews
 	private JPanel southButtonsPanel;
 	private FlowLayout southButtonsLayout;
 	private JButton exitButton;
 	private JButton switchViewButton;
+	private JButton goBackToWelcomeScreenButton;
 
 	// Welcome view
 	private JPanel welcomeViewPanel;
@@ -46,6 +53,10 @@ public class GUIView extends View {
 	private JPanel createHeroViewPanel;
 	private JTextField heroNameField;
 	private ButtonGroup heroClassGroup;
+
+	// Select hero view
+	private JPanel selectHeroViewPanel;
+	private DefaultTableModel heroTableModel; 
 
 	public GUIView(Controller controller){
 		this.controller = controller;
@@ -72,14 +83,34 @@ public class GUIView extends View {
 		heroNameField.setText("");
 		heroClassGroup.clearSelection();	
 		setCentralPanel(createHeroViewPanel);
-		// Add hero panel with form, and go back
 	}
 
 	public void selectHeroMenu(List<Hero> heroes) {
-		// Show heroes with button to select one
+		if (heroes.isEmpty()){
+			notifyUser("There are no heroes created.");
+			controller.welcomeMenu();
+		} else {
+			heroTableModel.setRowCount(0);
+			for (Hero hero: heroes){
+				heroTableModel.addRow(new Object[]{
+					hero.getId(),
+					hero.getName(), 
+					hero.getType().toString(), 
+					hero.getLevel(),
+					hero.getAttack(), 
+					hero.getHitPoints(), 
+					hero.getDefense(),
+					hero.getWeaponStatWithBonus(),
+					hero.getHelmStatWithBonus(),
+					hero.getArmorStatWithBonus()}
+				);
+			}
+			setCentralPanel(selectHeroViewPanel);
+		}
 	}
 
 	public void selectedHeroMenu(Hero hero) {
+		System.out.println(hero);
 		// Play, delete or cancel menu
 	}
 
@@ -96,7 +127,7 @@ public class GUIView extends View {
 	}
 
 	public void notifyUser(String string) {
-		// Pop up
+		JOptionPane.showMessageDialog(mainFrame, string, null, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void setCentralPanel(JPanel panel){
@@ -109,9 +140,10 @@ public class GUIView extends View {
 
 	private void initView(){
 		configureMainFrame();
-		configureSouthPanel();
+		configureMultipleViewsElements();
 		configureWelcomeView();
 		configureCreateHeroView();
+		configureSelectHeroView();
 		mainFrame.setVisible(true);
 	}
 
@@ -135,7 +167,7 @@ public class GUIView extends View {
 		mainLayout.setVgap(10);
 	}
 
-	private void configureSouthPanel(){
+	private void configureMultipleViewsElements(){
 		southButtonsPanel = new JPanel();
 		southButtonsLayout = new FlowLayout();
 		southButtonsPanel.setLayout(southButtonsLayout);
@@ -149,6 +181,9 @@ public class GUIView extends View {
 		southButtonsPanel.add(switchViewButton);
 
 		mainFrame.add(southButtonsPanel, BorderLayout.SOUTH);
+
+		goBackToWelcomeScreenButton = new JButton("GO BACK");
+		goBackToWelcomeScreenButton.addActionListener(e->{controller.welcomeMenu();});
 	}
 
 	private void configureWelcomeView(){
@@ -206,18 +241,50 @@ public class GUIView extends View {
 					heroClass = HeroType.PEASANT;
 				}
 
-				if (heroName.isEmpty()) {
-					JOptionPane.showMessageDialog(null, "Please enter a hero name!", "Error", JOptionPane.ERROR_MESSAGE);
-				} else if (heroClass == null) {
-					JOptionPane.showMessageDialog(null, "Please select a hero class!", "Error", JOptionPane.ERROR_MESSAGE);
-				} else {
-					controller.onAddHero(heroName, heroClass);
-				}
+				// TODO: Notation based handling of empty name and empty class.
+				controller.onAddHero(heroName, heroClass);
 		});
 		createHeroViewPanel.add(createHeroButton);
 
-		JButton goBackButton = new JButton("GO BACK");
-		goBackButton.addActionListener(e->{controller.welcomeMenu();});
-		createHeroViewPanel.add(goBackButton);
+		createHeroViewPanel.add(goBackToWelcomeScreenButton);
+	}
+
+	private void configureSelectHeroView(){
+		selectHeroViewPanel = new JPanel();
+		GridLayout selectHeroViewLayout = new GridLayout(4, 1);
+		selectHeroViewPanel.setLayout(selectHeroViewLayout);
+
+		JLabel selectHeroLabel = new JLabel("Select a hero by clicking a row.");
+		selectHeroViewPanel.add(selectHeroLabel);
+
+		String[] columns = {"ID", "NAME", "CLASS", "LEVEL", "ATK", "HP", "DEF", "WEAPON", "HELM", "ARMOR"};
+		heroTableModel = new DefaultTableModel(columns, 0) {
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		JTable heroTable = new JTable(heroTableModel);
+		heroTable.getColumnModel().getColumn(0).setMinWidth(0);
+		heroTable.getColumnModel().getColumn(0).setMaxWidth(0);
+		heroTable.getColumnModel().getColumn(0).setWidth(0);
+		heroTable.getTableHeader().setResizingAllowed(false);
+		heroTable.getTableHeader().setReorderingAllowed(false);
+		heroTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		JScrollPane selectHeroScrollPane = new JScrollPane(heroTable);
+		selectHeroViewPanel.add(selectHeroScrollPane);
+
+		JButton selectHeroButton = new JButton("CHOOSE");
+		selectHeroButton.addActionListener(e->{
+			if (heroTable.getSelectedRow() != -1){
+				controller.onSelectHeroById((int) heroTable.getValueAt(heroTable.getSelectedRow(), 0));
+			} else {
+                JOptionPane.showMessageDialog(mainFrame, "Please select a hero", null, JOptionPane.ERROR_MESSAGE);
+            }
+		});
+		selectHeroViewPanel.add(selectHeroButton);
+
+		selectHeroViewPanel.add(goBackToWelcomeScreenButton);
 	}
 }

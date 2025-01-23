@@ -110,6 +110,13 @@ public class Controller {
 		showView();
 	}
 
+	public void onSelectHeroById(int id) {
+		Hero hero = model.getHero(id);
+		gameState.setCurrentHero(hero);
+		gameState.setGameStateType(GameStateType.SELECTED_HERO);
+		showView();
+	}
+
 	public void onRemoveHeroSelected() {
 		safeRemoveHero();
 		if (currentView != null)

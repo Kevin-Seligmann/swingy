@@ -73,6 +73,14 @@ public class Hero {
 	// Getters, setters, default constructor. (Hibernate needs).
 	public Hero(){}
 
+	public int getId(){
+		return id;
+	}
+
+	public void setId(int id){
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -151,6 +159,30 @@ public class Hero {
 
 	public void setArmorStat(int armorStat) {
 		this.armorStat = armorStat;
+	}
+
+	public int getArmorStatWithBonus(){
+		if (type == HeroType.ENCHANTER){
+			return getArmorStat() * enchanterArtifactMultiplier();
+		} else {
+			return getArmorStat();
+		}
+	}
+
+	public int getWeaponStatWithBonus(){
+		if (type == HeroType.ENCHANTER){
+			return getWeaponStat() * enchanterArtifactMultiplier();
+		} else {
+			return getWeaponStat();
+		}
+	}
+
+	public int getHelmStatWithBonus(){
+		if (type == HeroType.ENCHANTER){
+			return getHelmStat() * enchanterArtifactMultiplier();
+		} else {
+			return getHelmStat();
+		}
 	}
 
 	public void resetStats() {

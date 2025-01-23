@@ -70,8 +70,8 @@ public class Model {
             return sessionFactory.fromTransaction(session -> {
                 var builder = sessionFactory.getCriteriaBuilder();
                 CriteriaQuery<Hero> query = builder.createQuery(Hero.class);
-                Root<Hero> seguro = query.from(Hero.class);
-                query.select(seguro);
+                Root<Hero> hero = query.from(Hero.class);
+                query.select(hero);
                 return session.createSelectionQuery(query).getResultList();
             });
         } catch (Exception e) {
@@ -79,6 +79,17 @@ public class Model {
         }
 	}
 
+	public Hero getHero(int id) {
+        try {
+			return sessionFactory.fromTransaction(session -> {
+				return session.find(Hero.class, id);
+        });
+        } catch (Exception e){
+            throw new DatabaseErrorException("Updating Hero.");
+        }
+	}
+
+	// Validate
 	private void validateHero(Hero hero){
         StringBuilder error = new StringBuilder();
 
