@@ -30,6 +30,10 @@ public class Map {
 		return mapGrid[x][y];
 	}
 
+	public MapCell[][] getMapGrid(){
+		return mapGrid;
+	}
+
 	public void setHeroCell(MapCell cell){
 		heroCell.putEmpty();
 		cell.putHero();
