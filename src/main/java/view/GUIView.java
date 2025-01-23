@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.LayoutManager;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
@@ -62,7 +63,15 @@ public class GUIView extends View {
 	private DefaultTableModel heroTableModel;
 
 	// Selected hero view
-	private JPanel selectedHeroViewpanel;
+	private JPanel selectedHeroViewPanel;
+	private JPanel selectedHeroHeroCard;
+
+	// Map panel.
+	private JPanel mapViewPanel;
+	private JPanel mapContainerPanel;
+	private JPanel mapHeroCard;
+
+	// Show hero labels
 	private JLabel heroName; 
 	private JLabel heroClass; 
 	private JLabel heroStats; 
@@ -70,15 +79,6 @@ public class GUIView extends View {
 	private JLabel heroArtifacts; 
 	private JLabel enchanterBonus; 
 
-	// Map panel.
-	private JPanel mapViewPanel;
-	private JPanel mapContainerPanel;
-	private JLabel heroNameMap; 
-	private JLabel heroClassMap; 
-	private JLabel heroStatsMap; 
-	private JLabel heroLevelMap; 
-	private JLabel heroArtifactsMap;
-	private JLabel enchanterBonusMap;
 
 	// Pre fight menu
 	private JPanel preFightViewPanel;
@@ -141,30 +141,12 @@ public class GUIView extends View {
 	}
 
 	public void selectedHeroMenu(Hero hero) {
-		String[] heroInfo = hero.toString().split("\n");
-		heroName.setText(heroInfo[0]);
-		heroClass.setText(heroInfo[1]);
-		heroStats.setText(heroInfo[2]);
-		heroLevel.setText(heroInfo[3]);
-		heroArtifacts.setText(heroInfo[4]);
-		if (hero.getType() == HeroType.ENCHANTER)
-			enchanterBonus.setText(heroInfo[5]);
-		else
-			enchanterBonus.setText("");
-		setCentralPanel(selectedHeroViewpanel);
+		setHeroCard(hero, selectedHeroHeroCard);
+		setCentralPanel(selectedHeroViewPanel);
 	}
 
 	public void showMap(Map currentMap, Hero currentHero){
-		String[] heroInfo = currentHero.toString().split("\n");
-		heroNameMap.setText(heroInfo[0]);
-		heroClassMap.setText(heroInfo[1]);
-		heroStatsMap.setText(heroInfo[2]);
-		heroLevelMap.setText(heroInfo[3]);
-		heroArtifactsMap.setText(heroInfo[4]);
-		if (currentHero.getType() == HeroType.ENCHANTER)
-			enchanterBonusMap.setText(heroInfo[5]);
-		else
-			enchanterBonusMap.setText("");
+		setHeroCard(currentHero, mapHeroCard);
 		generateMap(currentMap);
 		setCentralPanel(mapViewPanel);
 	}
@@ -348,39 +330,26 @@ public class GUIView extends View {
 	}
 
 	public void configureSelectedHeroView(){
-		selectedHeroViewpanel = new JPanel();
-		GridLayout selectedHeroViewLayout = new GridLayout(9, 1);
-		selectedHeroViewpanel.setLayout(selectedHeroViewLayout);
+		selectedHeroViewPanel = new JPanel();
+		GridLayout selectedHeroViewLayout = new GridLayout(4, 1);
+		selectedHeroViewPanel.setLayout(selectedHeroViewLayout);
 
-		heroName = new JLabel();
-		selectedHeroViewpanel.add(heroName);
-
-		heroClass = new JLabel();
-		selectedHeroViewpanel.add(heroClass);
-
-		heroLevel = new JLabel();
-		selectedHeroViewpanel.add(heroLevel);
-
-		heroStats = new JLabel();
-		selectedHeroViewpanel.add(heroStats);
-
-		heroArtifacts = new JLabel();
-		selectedHeroViewpanel.add(heroArtifacts);
-
-		enchanterBonus = new JLabel();
-		selectedHeroViewpanel.add(enchanterBonus);
+		GridLayout heroCardLayout = new GridLayout(6, 1);
+		selectedHeroHeroCard = new JPanel();
+		selectedHeroHeroCard.setLayout(heroCardLayout);
+		selectedHeroViewPanel.add(selectedHeroHeroCard);
 
 		JButton playButton = new JButton("PLAY");
 		playButton.addActionListener(e->{controller.onPlayHeroSelected();});
-		selectedHeroViewpanel.add(playButton);
+		selectedHeroViewPanel.add(playButton);
 
 		JButton removeButton = new JButton("REMOVE");
 		removeButton.addActionListener(e->{controller.onRemoveHeroSelected();});
-		selectedHeroViewpanel.add(removeButton);
+		selectedHeroViewPanel.add(removeButton);
 
 		JButton goBackToWelcomeScreenButton = new JButton("GO BACK");
 		goBackToWelcomeScreenButton.addActionListener(e->{controller.onSelectHeroSelected();});
-		selectedHeroViewpanel.add(goBackToWelcomeScreenButton);
+		selectedHeroViewPanel.add(goBackToWelcomeScreenButton);
 	}
 
 	private void configureMapView(){
@@ -413,46 +382,38 @@ public class GUIView extends View {
 		quitMapButton.addActionListener(e->{controller.onSelectedHero();});
 		mapViewSouthPanel.add(quitMapButton);
 
-		JPanel eastLayoutMapPanel = new JPanel();
-		GridLayout eastLayoutMapPanelLayout = new GridLayout(6, 1);
-		eastLayoutMapPanel.setLayout(eastLayoutMapPanelLayout);
-		mapViewPanel.add(eastLayoutMapPanel, BorderLayout.EAST);
 
-		heroNameMap = new JLabel();
-		eastLayoutMapPanel.add(heroNameMap);
-
-		heroClassMap = new JLabel();
-		eastLayoutMapPanel.add(heroClassMap);
-
-		heroLevelMap = new JLabel();
-		eastLayoutMapPanel.add(heroLevelMap);
-
-		heroStatsMap = new JLabel();
-		eastLayoutMapPanel.add(heroStatsMap);
-
-		heroArtifactsMap = new JLabel();
-		eastLayoutMapPanel.add(heroArtifactsMap);
-
-		enchanterBonusMap = new JLabel();
-		eastLayoutMapPanel.add(enchanterBonusMap);
+		mapHeroCard = new JPanel();
+		GridLayout mapHeroCardLayout = new GridLayout(6, 1);
+		mapHeroCard.setLayout(mapHeroCardLayout);
+		mapViewPanel.add(mapHeroCard, BorderLayout.EAST);
 
 		mapContainerPanel = new JPanel();
 		mapViewPanel.add(mapContainerPanel, BorderLayout.CENTER);
 	}
 
-	// TODO: This is very slow
 	private void generateMap(Map map){
-		mapContainerPanel.removeAll();
 		int mapSize = map.getSize();
-		GridLayout layout = new GridLayout(mapSize, mapSize);
-		mapContainerPanel.setLayout(layout);
-
 		MapCell[][] mapGrid = map.getMapGrid();
+
+		LayoutManager currentLayout = mapContainerPanel.getLayout();
+		if (!(currentLayout instanceof GridLayout) || mapSize != ((GridLayout) currentLayout).getRows()) {
+			mapContainerPanel.removeAll();
+			GridLayout layout = new GridLayout(mapSize, mapSize);
+			mapContainerPanel.setLayout(layout);
+			for (int j = 0; j < mapSize; j++) {
+				for (int i = 0; i < mapSize; i++) {
+					JLabel cellLabel = new JLabel("", SwingConstants.CENTER);
+					cellLabel.setOpaque(true);
+					cellLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+					mapContainerPanel.add(cellLabel);
+				}
+			}
+		}
+
 		for (int j = 0; j < mapSize; j++) {
 			for (int i = 0; i < mapSize; i++) {
-				JLabel cellLabel = new JLabel("", SwingConstants.CENTER);
-				cellLabel.setOpaque(true);
-				cellLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				JLabel cellLabel = (JLabel)  mapContainerPanel.getComponent(j * mapSize + i);
 				
 				if (mapGrid[i][mapSize - 1 - j].isHero()){
 					cellLabel.setText("🦸");
@@ -466,8 +427,6 @@ public class GUIView extends View {
 					cellLabel.setText("⬛");
 					cellLabel.setBackground(Color.DARK_GRAY);
 				}
-
-				mapContainerPanel.add(cellLabel);
 			}
 		}
 	}
@@ -507,5 +466,47 @@ public class GUIView extends View {
 		JButton rejectArtifactButton = new JButton("REJECT ARTIFACT");
 		rejectArtifactButton.addActionListener(e->{controller.onRejectArtifact();});
 		artifactViewPanel.add(rejectArtifactButton);
+	}
+
+	private void setHeroCard(Hero hero, JPanel panel){
+		panel.removeAll();
+
+		String[] heroInfo = hero.toString().split("\n");
+
+		if (heroName == null)
+			heroName = new JLabel();
+		panel.add(heroName);
+
+		if (heroClass == null)
+			heroClass = new JLabel();
+		panel.add(heroClass);
+
+		if (heroLevel == null)
+			heroLevel = new JLabel();
+		panel.add(heroLevel);
+
+		if (heroStats == null)
+			heroStats = new JLabel();
+		panel.add(heroStats);
+
+		if (heroArtifacts == null)
+			heroArtifacts = new JLabel();
+		panel.add(heroArtifacts);
+
+		if (enchanterBonus == null)
+			enchanterBonus = new JLabel();
+		panel.add(enchanterBonus);
+
+		heroName.setText(heroInfo[0]);
+		heroClass.setText(heroInfo[1]);
+		heroStats.setText(heroInfo[2]);
+		heroLevel.setText(heroInfo[3]);
+		heroArtifacts.setText(heroInfo[4]);
+		if (hero.getType() == HeroType.ENCHANTER){
+			enchanterBonus.setText(heroInfo[5]);
+		}
+		else{
+			enchanterBonus.setText("");
+		}
 	}
 }
