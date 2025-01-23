@@ -26,8 +26,6 @@ import javax.swing.table.DefaultTableModel;
 
 import controller.Controller;
 import controller.UserInput;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import model.Artifact;
 import model.Hero;
 import model.HeroType;
@@ -78,7 +76,6 @@ public class GUIView extends View {
 	private JLabel heroLevel; 
 	private JLabel heroArtifacts; 
 	private JLabel enchanterBonus; 
-
 
 	// Pre fight menu
 	private JPanel preFightViewPanel;

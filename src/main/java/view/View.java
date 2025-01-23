@@ -6,7 +6,6 @@ import controller.Controller;
 import model.Artifact;
 import model.Hero;
 import model.Map;
-import model.MapCell;
 
 public abstract class View {
 	public abstract void setController(Controller controller);
