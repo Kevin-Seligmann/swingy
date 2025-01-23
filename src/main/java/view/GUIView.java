@@ -80,6 +80,15 @@ public class GUIView extends View {
 	private JLabel heroArtifactsMap;
 	private JLabel enchanterBonusMap;
 
+	// Pre fight menu
+	private JPanel preFightViewPanel;
+	private JLabel enemyFoundLabel;
+
+	// Artifact found menu
+	private JPanel artifactViewPanel;
+	private JLabel currentHeroArtifact;
+	private JLabel artifactInfoLabel;
+
 	public GUIView(Controller controller){
 		this.controller = controller;
 		initView();
@@ -153,19 +162,23 @@ public class GUIView extends View {
 		heroLevelMap.setText(heroInfo[3]);
 		heroArtifactsMap.setText(heroInfo[4]);
 		if (currentHero.getType() == HeroType.ENCHANTER)
-			enchanterBonus.setText(heroInfo[5]);
+			enchanterBonusMap.setText(heroInfo[5]);
 		else
-			enchanterBonus.setText("");
+			enchanterBonusMap.setText("");
 		generateMap(currentMap);
 		setCentralPanel(mapViewPanel);
 	}
 
 	public void preFightMenu(int enemyLevel){
-		// Ask to run or figh menu
+		enemyFoundLabel.setText("Enemy level " + enemyLevel + " found !!!");
+		setCentralPanel(preFightViewPanel);
 	}
 	
 	public void showArtifactMenu(Hero hero, Artifact artifact){
-		// Show artifact + ask menu
+		String[] heroInfo = hero.toString().split("\n");
+		artifactInfoLabel.setText("Found. " + artifact.toString());
+		currentHeroArtifact.setText("Current artifacts. " + heroInfo[4]);
+		setCentralPanel(artifactViewPanel);
 	}
 
 	public void notifyUser(String string) {
@@ -188,6 +201,8 @@ public class GUIView extends View {
 		configureSelectHeroView();
 		configureSelectedHeroView();
 		configureMapView();
+		configurePreFightView();
+		configureArtifactView();
 		mainFrame.setVisible(true);
 	}
 
@@ -388,12 +403,12 @@ public class GUIView extends View {
 		mapViewSouthPanel.add(goNorthButton);
 
 		JButton goSouthButton = new JButton("SOUTH");
-		goWestButton.addActionListener(e->{controller.onMove(UserInput.SOUTH);});
+		goSouthButton.addActionListener(e->{controller.onMove(UserInput.SOUTH);});
 		mapViewSouthPanel.add(goSouthButton);
 
-		JButton goEeastButton = new JButton("EAST");
-		goEeastButton.addActionListener(e->{controller.onMove(UserInput.EAST);});
-		mapViewSouthPanel.add(goEeastButton);
+		JButton goEastButton = new JButton("EAST");
+		goEastButton.addActionListener(e->{controller.onMove(UserInput.EAST);});
+		mapViewSouthPanel.add(goEastButton);
 
 		JButton quitMapButton = new JButton("QUIT MAP");
 		quitMapButton.addActionListener(e->{controller.onSelectedHero();});
@@ -456,5 +471,42 @@ public class GUIView extends View {
 				mapContainerPanel.add(cellLabel);
 			}
 		}
+	}
+
+	private void configurePreFightView(){
+		preFightViewPanel = new JPanel();
+		GridLayout preFightViewLayout = new GridLayout(3,1);
+		preFightViewPanel.setLayout(preFightViewLayout);
+		
+		enemyFoundLabel = new JLabel();
+		preFightViewPanel.add(enemyFoundLabel);
+
+		JButton fightButon = new JButton("FIGHT");
+		fightButon.addActionListener(e->{controller.onFight();});
+		preFightViewPanel.add(fightButon);
+
+		JButton runButton = new JButton("RUN");
+		runButton.addActionListener(e->{controller.onRun();});
+		preFightViewPanel.add(runButton);
+	}
+	
+	private void configureArtifactView(){
+		artifactViewPanel = new JPanel();
+		GridLayout artifactViewLayout = new GridLayout(4, 1);
+		artifactViewPanel.setLayout(artifactViewLayout);
+
+		artifactInfoLabel = new JLabel("");
+		artifactViewPanel.add(artifactInfoLabel);
+
+		currentHeroArtifact = new JLabel("");
+		artifactViewPanel.add(currentHeroArtifact);
+	
+		JButton keepArtifactButton = new JButton("KEEP ARTIFACT");
+		keepArtifactButton.addActionListener(e->{controller.onAcceptArtifact();});
+		artifactViewPanel.add(keepArtifactButton);
+
+		JButton rejectArtifactButton = new JButton("REJECT ARTIFACT");
+		rejectArtifactButton.addActionListener(e->{controller.onRejectArtifact();});
+		artifactViewPanel.add(rejectArtifactButton);
 	}
 }
