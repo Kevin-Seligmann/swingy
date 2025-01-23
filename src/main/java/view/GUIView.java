@@ -39,12 +39,11 @@ public class GUIView extends View {
 	private JFrame mainFrame;
 	private BorderLayout mainLayout;
 
-	// South panel and components for multples vieews
+	// South panel
 	private JPanel southButtonsPanel;
 	private FlowLayout southButtonsLayout;
 	private JButton exitButton;
 	private JButton switchViewButton;
-	private JButton goBackToWelcomeScreenButton;
 
 	// Welcome view
 	private JPanel welcomeViewPanel;
@@ -56,7 +55,16 @@ public class GUIView extends View {
 
 	// Select hero view
 	private JPanel selectHeroViewPanel;
-	private DefaultTableModel heroTableModel; 
+	private DefaultTableModel heroTableModel;
+
+	// Selected hero view
+	private JPanel selectedHeroViewpanel;
+	private JLabel heroName; 
+	private JLabel heroClass; 
+	private JLabel heroStats; 
+	private JLabel heroLevel; 
+	private JLabel heroArtifacts; 
+	private JLabel enchanterBonus; 
 
 	public GUIView(Controller controller){
 		this.controller = controller;
@@ -110,8 +118,17 @@ public class GUIView extends View {
 	}
 
 	public void selectedHeroMenu(Hero hero) {
-		System.out.println(hero);
-		// Play, delete or cancel menu
+		String[] heroInfo = hero.toString().split("\n");
+		heroName.setText(heroInfo[0]);
+		heroClass.setText(heroInfo[1]);
+		heroStats.setText(heroInfo[2]);
+		heroLevel.setText(heroInfo[3]);
+		heroArtifacts.setText(heroInfo[4]);
+		if (hero.getType() == HeroType.ENCHANTER)
+			enchanterBonus.setText(heroInfo[5]);
+		else
+			enchanterBonus.setText("");
+		setCentralPanel(selectedHeroViewpanel);
 	}
 
 	public void showMap(Map currentMap, Hero currentHero){
@@ -140,10 +157,11 @@ public class GUIView extends View {
 
 	private void initView(){
 		configureMainFrame();
-		configureMultipleViewsElements();
+		configureSouthPanel();
 		configureWelcomeView();
 		configureCreateHeroView();
 		configureSelectHeroView();
+		configureSelectedHeroView();
 		mainFrame.setVisible(true);
 	}
 
@@ -167,7 +185,7 @@ public class GUIView extends View {
 		mainLayout.setVgap(10);
 	}
 
-	private void configureMultipleViewsElements(){
+	private void configureSouthPanel(){
 		southButtonsPanel = new JPanel();
 		southButtonsLayout = new FlowLayout();
 		southButtonsPanel.setLayout(southButtonsLayout);
@@ -181,9 +199,6 @@ public class GUIView extends View {
 		southButtonsPanel.add(switchViewButton);
 
 		mainFrame.add(southButtonsPanel, BorderLayout.SOUTH);
-
-		goBackToWelcomeScreenButton = new JButton("GO BACK");
-		goBackToWelcomeScreenButton.addActionListener(e->{controller.welcomeMenu();});
 	}
 
 	private void configureWelcomeView(){
@@ -246,6 +261,8 @@ public class GUIView extends View {
 		});
 		createHeroViewPanel.add(createHeroButton);
 
+		JButton goBackToWelcomeScreenButton = new JButton("GO BACK");
+		goBackToWelcomeScreenButton.addActionListener(e->{controller.welcomeMenu();});
 		createHeroViewPanel.add(goBackToWelcomeScreenButton);
 	}
 
@@ -280,11 +297,49 @@ public class GUIView extends View {
 			if (heroTable.getSelectedRow() != -1){
 				controller.onSelectHeroById((int) heroTable.getValueAt(heroTable.getSelectedRow(), 0));
 			} else {
-                JOptionPane.showMessageDialog(mainFrame, "Please select a hero", null, JOptionPane.ERROR_MESSAGE);
-            }
+				JOptionPane.showMessageDialog(mainFrame, "Please select a hero", null, JOptionPane.ERROR_MESSAGE);
+			}
 		});
 		selectHeroViewPanel.add(selectHeroButton);
 
+		JButton goBackToWelcomeScreenButton = new JButton("GO BACK");
+		goBackToWelcomeScreenButton.addActionListener(e->{controller.welcomeMenu();});
 		selectHeroViewPanel.add(goBackToWelcomeScreenButton);
+	}
+
+	public void configureSelectedHeroView(){
+		selectedHeroViewpanel = new JPanel();
+		GridLayout selectedHeroViewLayout = new GridLayout(9, 1);
+		selectedHeroViewpanel.setLayout(selectedHeroViewLayout);
+
+		heroName = new JLabel();
+		selectedHeroViewpanel.add(heroName);
+
+		heroClass = new JLabel();
+		selectedHeroViewpanel.add(heroClass);
+
+		heroLevel = new JLabel();
+		selectedHeroViewpanel.add(heroLevel);
+
+		heroStats = new JLabel();
+		selectedHeroViewpanel.add(heroStats);
+
+		heroArtifacts = new JLabel();
+		selectedHeroViewpanel.add(heroArtifacts);
+
+		enchanterBonus = new JLabel();
+		selectedHeroViewpanel.add(enchanterBonus);
+
+		JButton playButton = new JButton("PLAY");
+		playButton.addActionListener(e->{controller.onPlayHeroSelected();});
+		selectedHeroViewpanel.add(playButton);
+
+		JButton removeButton = new JButton("REMOVE");
+		removeButton.addActionListener(e->{controller.onRemoveHeroSelected();});
+		selectedHeroViewpanel.add(removeButton);
+
+		JButton goBackToWelcomeScreenButton = new JButton("GO BACK");
+		goBackToWelcomeScreenButton.addActionListener(e->{controller.onSelectHeroSelected();});
+		selectedHeroViewpanel.add(goBackToWelcomeScreenButton);
 	}
 }
