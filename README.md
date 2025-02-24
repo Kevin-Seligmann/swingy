@@ -76,7 +76,10 @@ Enemy levels are determined based on hero level, with a luck factor added or sub
 
 Enemy stats are solely based on their level.
 
-Map
-Map size is determined by hero level using the formula: (level - 1) * 5 + 10 - (level % 2)-
+### Map
+
+Map size is determined by hero level using the formula: (level - 1) * 5 + 10 - (level % 2).
+
 The density of enemies and artifacts remains constant across levels.
+
 Enemies can spawn at the edge of the map.
